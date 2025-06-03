@@ -7,31 +7,32 @@ use App\Http\Requests\UpdateJobPostingRequest;
 use App\Models\JobPosting; 
 use App\Http\Resources\JobPostingResource; 
 use Illuminate\Http\JsonResponse;
+
 class JobPostingController extends Controller
 {
     /**
      * Display a listing of jobs.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
       
         $query = JobPosting::query()->with(['company', 'jobType'])->where('status', 'active');
 
       
 
-        if ($request->filled('location')) {
+        if ($request->has('location')) {
             $query->where('location', 'like', '%' . $request->location . '%');
         }
     
-        if ($request->filled('job_type_id')) {
+        if ($request->has('job_type_id')) {
             $query->where('job_type_id', $request->job_type_id);
         }
     
-        if ($request->filled('min_salary')) {
+        if ($request->has('min_salary')) {
             $query->where('min_salary', '>=', $request->min_salary);
         }
     
-        if ($request->filled('max_salary')) {
+        if ($request->has('max_salary')) {
             $query->where('max_salary', '<=', $request->max_salary);
         }
     
