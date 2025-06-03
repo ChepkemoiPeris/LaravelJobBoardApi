@@ -11,7 +11,7 @@ class StoreJobApplicationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()?->role === 'job_seeker';
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreJobApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'job_id' => ['required', 'exists:job_postings,id'],
+            'cover_letter' => ['nullable', 'string'],
+            'cv' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
         ];
     }
 }

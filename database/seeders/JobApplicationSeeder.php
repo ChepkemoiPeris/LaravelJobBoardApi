@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\JobApplication;
 
 class JobApplicationSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class JobApplicationSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        JobApplication::factory()->count(20)->create();
     }
 }
