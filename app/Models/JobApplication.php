@@ -15,6 +15,7 @@ class JobApplication extends Model
         'user_id',
         'cover_letter',
         'cv_path',
+        'status'
     ];
 
     public function user()

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\StoreCompanyRequest;
-use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\StoreCompanyRequest;
+use App\Http\Requests\Api\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Http\Resources\CompanyResource; 
 use Illuminate\Http\JsonResponse;
@@ -15,7 +16,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::all();
+        $companies = Company::paginate(20);
         return CompanyResource::collection($companies);
     }
 
@@ -36,9 +37,17 @@ class CompanyController extends Controller
     /**
      * Display the specified company.
      */
-    public function show(Company $company)
+    public function show($id)
     {
-        return new CompanyResource($company);
+        $company = Company::find($id);
+
+        if (!$company) {
+            return response()->json([
+                'message' => 'Company not found'
+            ], 404);
+        }
+
+        return new CompanyResource($company); 
     }
 
    
@@ -47,6 +56,9 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
+        if (auth()->user()->role !== 'company_user' ||  auth()->user()->company_id !== $company->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $company->update($request->validated());
 
         return response()->json([
@@ -62,7 +74,10 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        
+        if (auth()->user()->role !== 'company_user' ||  auth()->user()->company_id !== $company->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $company->delete();
 
         return response()->json(['message' => 'Company deleted successfully']);

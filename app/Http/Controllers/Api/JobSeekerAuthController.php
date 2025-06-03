@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Api\RegisterJobSeekerRequest;
 use App\Http\Requests\Api\LoginRequest;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\UserResource;
 
 class JobSeekerAuthController extends BaseAuthController
 {
@@ -23,7 +24,10 @@ class JobSeekerAuthController extends BaseAuthController
         }
 
         $token = $user->createToken('job_seeker_token')->plainTextToken;
-
-        return response()->json(['token' => $token]);
+ 
+        return response()->json([
+            'token' => $token,
+            'user' => new UserResource($user),
+        ]);
     }
 }

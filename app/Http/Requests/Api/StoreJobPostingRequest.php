@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,15 +21,14 @@ class StoreJobPostingRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'company_id' => ['required', 'exists:companies,id'],
+        return [ 
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'location' => ['required', 'string', 'max:255'],
             'min_salary' => ['nullable', 'integer'],
             'max_salary' => ['nullable', 'integer', 'gte:min_salary'],
             'job_type_id' => ['required', 'exists:job_types,id'],
-            'status' => ['required', 'in:active,inactive'],
+            'status' => ['sometimes', 'in:active,inactive'],
             'deadline' => ['required', 'date', 'after:today']
         ];
     }
