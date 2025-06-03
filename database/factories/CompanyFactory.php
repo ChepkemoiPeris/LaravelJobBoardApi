@@ -20,7 +20,7 @@ class CompanyFactory extends Factory
             'name' => $this->faker->company(),
             'description' => $this->faker->paragraph(),
             'industry' => $this->faker->word(),
-            'location' => $this->faker->city() . ', Kenya',
+            'address' => $this->faker->city() . ', Kenya',
             'website' => $this->faker->url(),
         ];
     }

@@ -11,7 +11,7 @@ class JobApplication extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_id',
+        'job_posting_id',
         'user_id',
         'cover_letter',
         'cv_path',
@@ -24,6 +24,6 @@ class JobApplication extends Model
 
     public function job()
     {
-        return $this->belongsTo(JobPosting::class, 'job_id');
+        return $this->belongsTo(JobPosting::class, 'job_posting_id');
     }
 }

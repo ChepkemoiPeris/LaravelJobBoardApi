@@ -19,7 +19,7 @@ class JobApplicationFactory extends Factory
     public function definition(): array
     {
         return [
-            'job_id' => JobPosting::inRandomOrder()->first()->id,
+            'job_posting_id' => JobPosting::inRandomOrder()->first()->id,
             'user_id' => User::where('role', 'job_seeker')->inRandomOrder()->first()->id,
             'cover_letter' => $this->faker->paragraph(3),
             'cv_path' => 'cv_samples/sample_cv.pdf',  

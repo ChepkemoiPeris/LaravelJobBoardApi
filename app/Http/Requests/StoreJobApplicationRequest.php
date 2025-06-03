@@ -22,7 +22,7 @@ class StoreJobApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'job_id' => ['required', 'exists:job_postings,id'],
+            'job_posting_id' => ['required', 'exists:job_postings,id'],
             'cover_letter' => ['nullable', 'string'],
             'cv' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
         ];
