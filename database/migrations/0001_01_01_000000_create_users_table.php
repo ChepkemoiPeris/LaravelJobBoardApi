@@ -18,6 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->enum('role', ['job_seeker', 'company_user'])->default('job_seeker');
+            $table->unsignedBigInteger('company_id')->nullable();         
             $table->timestamps();
         });
 
