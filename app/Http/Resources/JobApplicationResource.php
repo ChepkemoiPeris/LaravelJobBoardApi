@@ -12,6 +12,7 @@ class JobApplicationResource extends JsonResource
             'job_title' => $this->job->title ?? null,
             'cover_letter' => $this->cover_letter,
             'cv_url' => $this->cv_path ? asset('storage/' . $this->cv_path) : null,
+            'status' =>$this->status,
             'applied_at' => $this->created_at->toDateTimeString(),
         ];
     }

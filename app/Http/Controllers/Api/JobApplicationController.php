@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\StoreJobApplicationRequest;
-use App\Http\Requests\UpdateJobApplicationRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\StoreJobApplicationRequest;
+use App\Http\Requests\Api\UpdateJobApplicationRequest;
+use App\Http\Resources\JobApplicationResource;
 use App\Models\JobApplication;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class JobApplicationController extends Controller
 {
@@ -43,14 +47,31 @@ class JobApplicationController extends Controller
     public function store(StoreJobApplicationRequest $request): JsonResponse
     {
          
+        $user = $request->user();
+        $jobPostingId = $request->input('job_posting_id');
+    
+        // Check if the user has already applied
+        $existingApplication = JobApplication::where('user_id', $user->id)
+            ->where('job_posting_id', $jobPostingId)
+            ->first();
+    
+        if ($existingApplication) {
+            return response()->json([
+                'message' => 'You have already applied to this job.'
+            ], 409); 
+        }
+
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
+        $data['status'] = 'applied';
 
         if ($request->hasFile('cv')) {
             $data['cv_path'] = $request->file('cv')->store('cvs', 'public');
         }
 
         $application = JobApplication::create($data);
+
+        Log::info("User {$user->id} applied to job {$jobPostingId} at " . now());
 
         return response()->json(new JobApplicationResource($application->load('job')));
 
@@ -59,15 +80,22 @@ class JobApplicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, JobApplication $jobApplication)
+    public function show(Request $request, $id)
         {
-            $user = $request->user();
+            $jobApplication = JobApplication::with('job')->find($id);
 
+            if (!$jobApplication) {
+                return response()->json([
+                    'message' => 'jobApplication not found'
+                ], 404);
+            }
+            $user = $request->user();
+           
             // Job seeker can see their own applications
             if ($user->role === 'job_seeker' && $jobApplication->user_id === $user->id) {
                 return new JobApplicationResource($jobApplication);
             }
-
+ 
             // Company user can see applications for their jobs
             if ($user->role === 'company_user' && $jobApplication->job->company_id === $user->company_id) {
                 return new JobApplicationResource($jobApplication);
@@ -80,8 +108,16 @@ class JobApplicationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateJobApplicationRequest $request, JobApplication $jobApplication)
+    public function update(UpdateJobApplicationRequest $request, $id)
     {
+
+        $jobApplication = JobApplication::with('job')->find($id);
+
+        if (!$jobApplication) {
+            return response()->json([
+                'message' => 'jobApplication not found'
+            ], 404);
+        }
         $user = $request->user();
     
         if ($user->role !== 'company_user' || $jobApplication->job->company->id !== $user->company->id) {
@@ -91,22 +127,32 @@ class JobApplicationController extends Controller
         $jobApplication->update([
             'status' => $request->input('status'),
         ]);
-    
+        Log::info("Job {$id} status updated to '{$jobApplication->status}' by user {$user->id} at " . now());
+
         return new JobApplicationResource($jobApplication);
     }
     
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, JobApplication $jobApplication)
+    public function destroy(Request $request, $id)
     {
+        $jobApplication = JobApplication::with('job')->find($id);
+        
+        if (!$jobApplication) {
+            return response()->json([
+                'message' => 'jobApplication not found'
+            ], 404);
+        }
         $user = $request->user();
 
         // Only job seeker who owns the application can delete
         if ($user->role === 'job_seeker' && $jobApplication->user_id === $user->id) {
             $jobApplication->delete();
+            Log::info("Application {$id} deleted by user {$user->id} at " . now());
             return response()->json(['message' => 'Application deleted successfully']);
         }
+
 
         return response()->json(['message' => 'Unauthorized'], 403);
     }

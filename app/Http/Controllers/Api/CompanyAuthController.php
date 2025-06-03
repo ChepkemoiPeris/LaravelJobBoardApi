@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Api\RegisterCompanyUserRequest;
 use App\Http\Requests\Api\LoginRequest;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\UserResource;
 
 class CompanyAuthController extends BaseAuthController
 {
@@ -23,7 +24,10 @@ class CompanyAuthController extends BaseAuthController
         }
 
         $token = $user->createToken('company_token')->plainTextToken;
-
-        return response()->json(['token' => $token]);
+        
+        return response()->json([
+            'token' => $token,
+            'user' => new UserResource($user),
+        ]);
     }
 }

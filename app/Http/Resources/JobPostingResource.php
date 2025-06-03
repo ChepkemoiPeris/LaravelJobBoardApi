@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class JobPostingResource extends JsonResource
 {
@@ -22,7 +23,7 @@ class JobPostingResource extends JsonResource
             'max_salary' => $this->max_salary,
             'job_type' => $this->jobType->name,
             'status' => $this->status,
-            'deadline' => $this->deadline->toDateString(),
+            'deadline' => Carbon::parse($this->deadline)->toDateString(),
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }

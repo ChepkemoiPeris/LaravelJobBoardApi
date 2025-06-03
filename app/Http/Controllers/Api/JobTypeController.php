@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
  
+use App\Http\Controllers\Controller;
 use App\Models\JobType;
+use Illuminate\Http\JsonResponse; 
 
 class JobTypeController extends Controller
 {
