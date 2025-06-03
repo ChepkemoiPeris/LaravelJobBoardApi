@@ -72,51 +72,47 @@ php artisan db:seed
 php artisan serve
 ```
 
+**API Access**
+- Base URL: http://127.0.0.1:8000/api
 
-### API Access
+- Authentication: Token-based via Laravel Sanctum
 
-Base URL: http://127.0.0.1:8000/api
+- Routing: See postman_collection/LaravelJobBoardPeris.postman_collection.json for postman collection you can use for test 
 
-Authentication: Token-based via Laravel Sanctum
-
-Routing: See postman_collection/LaravelJobBoardPeris.postman_collection.json for postman collection you can use for test 
-
-### Test users after seeding
-
+**Test users after seeding**
 // Job Seeker      
-email:johndoe@example.com
-password: password
+- email:johndoe@example.com
+- password: password
 
 // Company User        
-email: janedoe@example.com 
-password: password 
+- email: janedoe@example.com 
+- password: password 
 
-### Rate Limiting
- 
+**Rate LImiting**
+Rate Limiting
 Rate limiting is applied at the route level using Laravel’s throttle middleware to help prevent abuse:
 
-Job Seeker
+Job Seeker:
 
-POST /jobseeker/user/register → 5 requests per minute
+- POST /jobseeker/user/register → 5 requests per minute
 
-POST /jobseeker/user/login → 5 requests per minute
+- POST /jobseeker/user/login → 5 requests per minute
 
-POST /jobseeker/jobs/apply/{job} → 3 requests per minute
+- POST /jobseeker/jobs/apply/{job} → 3 requests per minute
 
-Company
+Company:
 
-POST /company/user/register → 5 requests per minute
+- POST /company/user/register → 5 requests per minute
 
-POST /company/user/login → 5 requests per minute
+- POST /company/user/login → 5 requests per minute
 
-POST /company/store → 5 requests per minute
+- POST /company/store → 5 requests per minute
 
-POST /company/jobs/store → 5 requests per minute
+- POST /company/jobs/store → 5 requests per minute
 
 All other routes fall under Laravel’s default global limit of 60 requests per minute per IP.
 
-### AI tools used 
-
+**AI tools used** 
 AI assistance, Specifically, OpenAI’s ChatGPT (GPT-4) was used for: 
-Creating documentation - README
-Fixing few code errors
+- Creating documentation - README
+- Fixing few code errors
