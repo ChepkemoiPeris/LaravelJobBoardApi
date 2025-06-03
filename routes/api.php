@@ -19,37 +19,35 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('jobseeker')->group(function () {
-    Route::post('user/register', [JobSeekerAuthController::class, 'register']);
-    Route::post('user/login', [JobSeekerAuthController::class, 'login']);
+    Route::post('user/register', [JobSeekerAuthController::class, 'register'])->middleware('throttle:5,1');
+    Route::post('user/login', [JobSeekerAuthController::class, 'login'])->middleware('throttle:5,1');
 
     Route::middleware(['auth:sanctum', 'role:job_seeker'])->group(function () { 
         Route::get('dashboard/applications', [JobApplicationController::class, 'index']);  
-        Route::post('jobs/apply/{job}', [JobApplicationController::class, 'store']);  
+        Route::post('jobs/apply/{job}', [JobApplicationController::class, 'store'])->middleware('throttle:3,1');  
         Route::delete('applications/{application}', [JobApplicationController::class, 'destroy']);  
 
     });
 });
 
 Route::prefix('company')->group(function () {
-    Route::post('user/register', [CompanyAuthController::class, 'register']);
-    Route::post('user/login', [CompanyAuthController::class, 'login']);
-    Route::post('store', [CompanyController::class, 'store']);
+    Route::post('user/register', [CompanyAuthController::class, 'register'])->middleware('throttle:5,1');
+    Route::post('user/login', [CompanyAuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('store', [CompanyController::class, 'store'])->middleware('throttle:5,1');
 
     Route::middleware(['auth:sanctum', 'role:company_user'])->group(function () {
-        Route::get('dashboard', [CompanyDashboardController::class, 'index']);
-
         //company routes
         Route::put('update/{company}', [CompanyController::class, 'update']);
         Route::delete('delete/{company}', [CompanyController::class, 'destroy']);
 
         //company job listing routes
         Route::get('jobs', [JobPostingController::class, 'companyJobs']);
-        Route::post('jobs/store', [JobPostingController::class, 'store']);
+        Route::post('jobs/store', [JobPostingController::class, 'store'])->middleware('throttle:5,1');
         Route::put('jobs/{jobPosting}', [JobPostingController::class, 'update']);
         Route::delete('jobs/{jobPosting}', [JobPostingController::class, 'destroy']);
 
         //company job applications
-        Route::get('applications', [JobApplicationController::class, 'index']);       
+        Route::get('dashboard/applications', [JobApplicationController::class, 'index']);       
         Route::put('applications/{application}', [JobApplicationController::class, 'update']);  
 
     });
