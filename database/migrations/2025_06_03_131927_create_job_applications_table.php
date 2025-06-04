@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('cover_letter');
             $table->string('cv_path');
-            $table->string('status')->default('applied');
-            $table->unique(['job_posting_id', 'user_id']);
+            $table->string('status')->default('applied'); 
             $table->timestamps();
         });
     }
